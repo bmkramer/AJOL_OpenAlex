@@ -2,7 +2,7 @@
 
 This repository contains code and data querying the OpenAlex and Crossref APIs to check for presence of [African Journals Online (AJOL)](https://www.ajol.info/index.php/ajol) journals in OpenAlex and Crossref by ISSN.
 
-Limitation: only a subset of AJOL journals is checked: **all OA journals listed in AJOL in July 2020** - this [list](https://docs.google.com/spreadsheets/d/1yBZvjTFj4y-2tNiDHaNaCqD0ilJnXCV5/edit#gid=1878417458) was created for use in our [crowdsourced list of diamond journals](https://tinyurl.com/diamond-journals).
+Only a subset of AJOL journals is checked: **all OA journals listed in AJOL in July 2020** - this [list](https://docs.google.com/spreadsheets/d/1yBZvjTFj4y-2tNiDHaNaCqD0ilJnXCV5/edit#gid=1878417458) was created for use in our [crowdsourced list of diamond journals](https://tinyurl.com/diamond-journals).
 
 In total 259 journals with ISSNs were checked on Jan 30, 2021. 
 Of these, **230 were found in Crossref**, and **143 in OpenAlex**. All titles retrieved from OpenAlex were also present in Crossref. 
