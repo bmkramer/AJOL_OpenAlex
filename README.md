@@ -1,4 +1,4 @@
-# Coverage of AJOL in OpenAlex and Crossref
+# Coverage of AJOL journals in OpenAlex and Crossref
 
 This repository contains code and data querying the OpenAlex and Crossref APIs to check for presence of [African Journals Online (AJOL)](https://www.ajol.info/index.php/ajol) journals in OpenAlex and Crossref by ISSN.
 
