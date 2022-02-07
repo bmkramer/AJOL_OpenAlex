@@ -11,16 +11,27 @@
 #load packages
 library(tidyverse)
 
+#set date to date of sampling
+#date <- Sys.Date()
+date <- "2022-01-31"
+
+#set path
+path <- file.path("data",date) 
+
 #load data (AJOL OA journal long format with unique issns)
 data <- read_csv("data/AJOL_OA_issns_202007.csv")
 
 #NB 2 journals (SAFP and SAJCN) have the same issn/eissn
 
-data_openalex <- read_csv("data/AJOL_OA_OpenAlex_20220131.csv")
-data_cr <- read_csv("data/AJOL_OA_Crossref_20220131.csv")
+filename <- paste0("AJOL_OA_OpenAlex_",date,".csv")
+filepath <- file.path(path, filename)
+data_openalex <- read_csv(filepath)
 
-# NB duplicate issn/eissn for SAFP and SAJCN 
-# resolve to SAFP in both OpenAlex and Crossref 
+filename <- paste0("AJOL_OA_Crossref_",date,".csv")
+filepath <- file.path(path, filename)
+data_cr <- read_csv(filepath)
+
+# NB duplicate issn/eissn for SAFP and SAJCN resolve to SAFP in both OpenAlex and Crossref 
 
 #----------------------------------------------------
 
@@ -58,8 +69,12 @@ data_final <- data_join %>%
   select(-issn_value) %>%
   distinct() 
 
-write_csv(data_final, "data/AJOL_OA_202007_OpenAlex_Crossref_20220131.csv")
-data_final <- read_csv("data/AJOL_OA_202007_OpenAlex_Crossref_20220131.csv")
+filename <- paste0("AJOL_OA_202007_OpenAlex_Crossref_",date,".csv")
+filepath <- file.path(path, filename)
+write_csv(data_final, filepath)
+#data_final <- read_csv(filepath)
+
+
 #-----------------------------------------------------
 
 #analyze results

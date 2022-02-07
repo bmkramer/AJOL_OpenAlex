@@ -11,7 +11,6 @@
 #load packages
 library(tidyverse)
 library(httr)
-library(rcrossref)
 
 # Set email as variable "openalex_email" in .Renviron
 # Set email as variable "crossref_email" in .Renviron
@@ -64,6 +63,14 @@ extractData <- function(x){
   
 #-------------------------------------------------------
   
+#set date to date of sampling
+#date <- Sys.Date()
+date <- "2022-01-31"
+
+#set path
+path <- file.path("data",date) 
+
+
 #load data (AJOL OA journal long format with unique issns)
 data <- read_csv("data/AJOL_OA_issns_202007.csv")
 
@@ -85,7 +92,10 @@ res <- map(issns, ~getData(.,
 #extract selected variables into dataframe
 res_df <- map_dfr(res, extractData)
 
-write_csv(res_df, "data/AJOL_OA_OpenAlex_20220131.csv")
-res_df <- read_csv("data/AJOL_OA_OpenAlex_20220131.csv")
+
+filename <- paste0("AJOL_OA_OpenAlex_",date,".csv")
+filepath <- file.path(path, filename)
+write_csv(res_df, filepath)
+res_df <- read_csv(filepath)
 
 rm(res)
