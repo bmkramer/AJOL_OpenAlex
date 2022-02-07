@@ -16,7 +16,7 @@ Scripts:
 [03_analyze.R](03_analyze.R)
 
 Resulting dataset:  
-[data/AJOL_OA_202007_OpenAlex_Crossref_20220130.csv](data/AJOL_OA_202007_OpenAlex_Crossref_20220130.csv)
+[data/AJOL_OA_202007_OpenAlex_Crossref_20220130.csv](data/2022-01-31/AJOL_OA_202007_OpenAlex_Crossref_2022-01-30.csv)
 
 
 Limitations / next steps:
