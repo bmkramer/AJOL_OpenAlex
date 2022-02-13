@@ -30,3 +30,5 @@ Limitations / next steps:
 - No additional information was collected on e.g. type of publication or publication year to investigate differences in record count in OpenAlex and Crossref for journals included in both. 
 
 - It was not checked whether OpenAlex includes additional AJOL journal titles when searched not by ISSN, but e.g. by journal name.
+
+- OpenAlex is actively improving its coverage. OpenAlex metadata (included in [AJOL_OpenAlex_2022-02-13.csv](data/2022-02-13/AJOL_OpenAlex_2022-02-13.csv) shows that 191 of the 464 AJOL journals found in OpenAlex were added to the database on February 3, 2022.
