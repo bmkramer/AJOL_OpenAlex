@@ -1,36 +1,37 @@
 #This script queries the OpenAlex and Crossref APIs to check for presence of AJOL journals in OpenAlex
-#Limitation: a subset of AJOL journals is checked: all OA journals listed in AJOL in July 2020
-#This list was created for use in crowdsourced list of diamond journals (see link below).
 
 #More information:
 #AJOL: https://www.ajol.info/index.php/ajol
-#Crowdsourced list of diamond journals:  https://tinyurl.com/diamond-journals
 #OpenAlex API: https://docs.openalex.org/api
 #rcrossref package: https://cran.r-project.org/web/packages/rcrossref/rcrossref.pdf 
+
+#STEP 3 - analyze results
 
 #load packages
 library(tidyverse)
 
 #set date to date of sampling
 #date <- Sys.Date()
-date <- "2022-01-31"
+date <- "2022-02-13"
 
 #set path
 path <- file.path("data",date) 
 
-#load data (AJOL OA journal long format with unique issns)
-data <- read_csv("data/AJOL_OA_issns_202007.csv")
 
+#load data (AJOL journals in long format with unique issns)
+filename <- paste0("AJOL_issns_",date,".csv")
+filepath <- file.path(path, filename)
+data <- read_csv(filepath)
+#532 of 545 AJOL journals have issns, 667 issns of which 665 unique
 #NB 2 journals (SAFP and SAJCN) have the same issn/eissn
 
-filename <- paste0("AJOL_OA_OpenAlex_",date,".csv")
+filename <- paste0("AJOL_OpenAlex_",date,".csv")
 filepath <- file.path(path, filename)
 data_openalex <- read_csv(filepath)
 
-filename <- paste0("AJOL_OA_Crossref_",date,".csv")
+filename <- paste0("AJOL_Crossref_",date,".csv")
 filepath <- file.path(path, filename)
 data_cr <- read_csv(filepath)
-
 # NB duplicate issn/eissn for SAFP and SAJCN resolve to SAFP in both OpenAlex and Crossref 
 
 #----------------------------------------------------
@@ -45,6 +46,9 @@ data_openalex_join <- data_openalex %>%
   mutate(in_open_alex = case_when(
     !is.na(open_alex_title) ~ "open_alex",
     TRUE ~ NA_character_)) %>%
+  mutate(open_alex_count = case_when(
+    open_alex_count == 0 ~ NA_real_,
+    TRUE ~ open_alex_count)) %>%
   select(issn_input, in_open_alex, open_alex_count)
 
 data_cr_join <- data_cr %>%
@@ -54,33 +58,55 @@ data_cr_join <- data_cr %>%
   mutate(in_crossref = case_when(
     !is.na(crossref_title) ~ "crossref",
     TRUE ~ NA_character_)) %>%
+  mutate(crossref_count = case_when(
+    crossref_count == 0 ~ NA_real_,
+    TRUE ~ crossref_count)) %>%
   select(issn_input_cr, in_crossref, crossref_count)
+
+rm(data_cr, data_openalex)
 
 #join dataframes
 data_join <- data %>%
   left_join(data_openalex_join, by = c("issn_value" = "issn_input")) %>%
-  left_join(data_cr_join, by = c("issn_value" = "issn_input_cr") )
+  left_join(data_cr_join, by = c("issn_value" = "issn_input_cr"))
+
+rm(data_cr_join, data_openalex_join)
 
 #fill Crossref/OpenAlex info across multiple ISSN records per title
 data_final <- data_join %>%
-  group_by(`Journal title`) %>%
+  group_by(journal) %>%
   fill(everything(), .direction = "downup") %>%
   ungroup() %>%
   select(-issn_value) %>%
   distinct() 
+#535 instead of 532 records
 
-filename <- paste0("AJOL_OA_202007_OpenAlex_Crossref_",date,".csv")
+#3 journals have duplicate records (= different results for both issns)
+#all have different results for OpenAlex (results for Crossref are either identical or filled out)
+#all 3 have different title (title variants) and issn_l for both issns in OpenAlex
+
+#Decide to *only keep highest count* (but could also decide to add counts for both issns)
+#TODO check overlap of records for these title variants in OpenAlex
+
+data_final_corrected <- data_final %>%
+  group_by(journal) %>%
+  arrange(desc(open_alex_count)) %>%
+  slice(1) %>%
+  ungroup()
+
+rm(data_final)
+  
+filename <- paste0("AJOL_OpenAlex_Crossref_",date,".csv")
 filepath <- file.path(path, filename)
-write_csv(data_final, filepath)
-#data_final <- read_csv(filepath)
-
+write_csv(data_final_corrected, filepath)
+#data_final_corrected <- read_csv(filepath)
 
 #-----------------------------------------------------
 
 #analyze results
 
-counts <- data_final %>%
-  select(`Journal title`, in_crossref, in_open_alex) %>%
+counts <- data_final_corrected %>%
+  select(journal, in_crossref, in_open_alex) %>%
   mutate(crossref_only = case_when(
             !is.na(in_crossref) & is.na(in_open_alex) ~ "crossref_only",
             TRUE ~ NA_character_),
@@ -95,7 +121,8 @@ counts <- data_final %>%
            TRUE ~ NA_character_)) %>%
   summarise_all(~ sum(!is.na(.)))
   
-counts_compare <- data_final %>%
+#compare counts for journals in both crossref and openalex
+counts_compare <- data_final_corrected %>%
   filter(!is.na(in_crossref) & !is.na(in_open_alex))  %>%
   mutate(
     crossref_more = case_when(
@@ -107,8 +134,7 @@ counts_compare <- data_final %>%
     equal = case_when(
       crossref_count == open_alex_count ~ "equal",
       TRUE ~ NA_character_)) %>%
-  select(`Journal title`, crossref_more, openalex_more, equal) %>%
+  select(journal, crossref_more, openalex_more, equal) %>%
   summarise_all(~ sum(!is.na(.)))
-  
   
 
