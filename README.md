@@ -12,7 +12,7 @@ The two AJOL journals in Crossref, but not found by ISSN in OpenAlex are [Caliph
 Of the 464 titles present in Crossref and OpenAlex, OpenAlex has more records than Crossref for **243 titles**, while Crossref has more records for **105 titles**.
 
 Scripts:  
-[00_AJOL_journals.R](00_AJOL_issns.R)  
+[00_AJOL_journals.R](00_AJOL_journals.R)  
 [01_AJOL_OpenAlex.R](01_AJOL_OpenAlex.R)  
 [02_AJOL_Crossref.R](02_AJOL_Crossref.R)  
 [03_AJOL_analyze.R](03_AJOL_analyze.R)
