@@ -1,9 +1,7 @@
 #functions to query OpenAlex API
-getOpenAlexData <- function(issn, issn_parameter, var_email){
+getOpenAlexData <- function(issn, var_email){
   url <- paste0("https://api.openalex.org/",
-                "venues/",
-                issn_parameter,
-                ":",
+                "venues/issn:",
                 issn,
                 "?mailto=",
                 email)
@@ -15,9 +13,9 @@ getOpenAlexData <- function(issn, issn_parameter, var_email){
 }
 
 #functions to add progress bar
-getOpenAlexData_progress <- function(x, issn_parameter, var_email){
+getOpenAlexData_progress <- function(x, var_email){
   pb$tick()$print()
-  res <- getOpenAlexData(x, issn_parameter, var_email)
+  res <- getOpenAlexDataISSN(x, var_email)
   
   return(res)
 }
@@ -29,10 +27,6 @@ extractOpenAlexData <- function(x){
     
     issn_l <- x$output %>%
       pluck("issn_l", .default = NA)
-    
-    id <- x$output %>%
-      pluck("id", .default = NA) %>%
-      str_remove("https://openalex.org/")
     
     display_name <- x$output %>%
       pluck("display_name", .default = NA)
@@ -48,7 +42,6 @@ extractOpenAlexData <- function(x){
     
     res <- list(issn_input = issn_input,
                 issn_l = issn_l,
-                id = id,
                 display_name = display_name,
                 publisher = publisher,
                 works_count = works_count,

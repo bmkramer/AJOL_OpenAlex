@@ -15,7 +15,7 @@ source("R/query_AJOL.R")
 
 #set date to date of sampling
 date <- Sys.Date()
-date <- "2022-02-13"
+#date <- "2022-02-19"
 
 #set path, create directory
 path <- file.path("data",date) 
@@ -26,7 +26,7 @@ url <- "https://www.ajol.info/index.php/ajol/browseBy/alpha?letter=all"
 
 #collect urls for all AJOL journals
 journal_urls <- getJournalData(url)
-#n=545 journals
+#n=546 journals
 
 #set counter for progress bar
 pb <- progress_estimated(length(journal_urls))
@@ -49,8 +49,8 @@ rm(data_raw)
 #keep selected columns, transform into long data with one issn column
 data_issn <- transformISSN(data)
 
-#NB This leaves out 13 titles with no ISSN (532 of 545 records)
-# 667 journal-issn pairs,of which 665 unique issns 
+#NB This leaves out 13 titles with no ISSN (533 of 546 records)
+# 668 journal-issn pairs,of which 666 unique issns 
 # 2 journals (SAFP and SAJCN) have the same issn/eissn
 
 filename <- paste0("AJOL_issns_",date,".csv")

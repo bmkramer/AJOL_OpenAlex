@@ -20,7 +20,7 @@ source("R/query_Crossref.R")
 
 #set date to date of sampling
 #date <- Sys.Date()
-date <- "2022-02-13"
+date <- "2022-02-19"
 
 #set path
 path <- file.path("data",date) 
